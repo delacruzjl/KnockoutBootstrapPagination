@@ -1,0 +1,65 @@
+﻿@{
+    Layout = null;
+}
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="@Url.Content("~/apple-touch-icon.png")">
+    <!-- Place favicon.ico in the root directory -->
+    <link rel="stylesheet" href="@Url.Content("~/css/normalize.css")"/>
+
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.css"  />
+
+    <!-- custom -->
+    <link rel="stylesheet" href="@Url.Content("~/css/main.css")">
+
+    <script src="@Url.Content("~/js/libs/modernizr-2.8.3.min.js")"></script>
+    <script src="//code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+    <script>window.jQuery || document.write('<script src="js/libs/jquery-3.1.0.min.js"><\/script>')</script>
+    <script src="//ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js"></script>
+</head>
+<body>
+    <!--[if lte IE 9]>
+        <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+    <![endif]-->
+    <!-- Add your site or application content here -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <p>Hello world! This is HTML5 Boilerplate.</p>
+            </div>
+        </div>
+        <div class="row">
+            <hgroup>
+                <h4 data-bind="text: totalPages"></h4>
+                <h5 data-bind="text: visiblePages().length"></h5>
+            </hgroup>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+
+                <nav aria-label="Page navigation">
+                    <ul class="pagination" data-bind="template: {name: 'page-template', foreach: visiblePages }"></ul>
+                </nav>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div id="templateContainer"></div>
+
+    <script src="//ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"></script>
+    <script src="@Url.Content("~/js/libs/knockout-3.4.1.js")"></script>
+<script src="@Url.Content("~/js/console/plugins.js")"></script>
+    <script src="@Url.Content("~/js/main.js")"></script>
+
+</body>
+</html>
