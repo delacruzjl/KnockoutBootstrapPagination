@@ -82,15 +82,16 @@ var vm;
     }
 
     function nextBatch() {
-        var currPage = vm.currentPage();
-        currPage += maxVisiblePages;
+        var currPage = vm.initIndex() +
+            vm.maxVisiblePages() +
+            1;
 
         changePage(currPage);
     }
 
     function previousBatch() {
-        var currPage = vm.currentPage();
-        currPage -= maxVisiblePages;
+        var currPage = (vm.endIndex() -
+            vm.maxVisiblePages());
 
         changePage(currPage);
     }

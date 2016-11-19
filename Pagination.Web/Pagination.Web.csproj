@@ -95,7 +95,6 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="js\console\plugins.js" />
-    <Content Include="js\ko-template-loader.js" />
     <Content Include="js\libs\jquery-3.1.0.min.js" />
     <Content Include="js\libs\knockout-3.4.1.js" />
     <Content Include="js\libs\modernizr-2.8.3.min.js" />
