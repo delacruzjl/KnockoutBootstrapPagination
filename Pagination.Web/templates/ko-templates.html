@@ -1,5 +1,5 @@
 ﻿<script type="text/html" id="page-template">
-    <li data-bind="visible: $data === (vm.initIndex() + 1), css: ($parent.currentPage() === 1 ? 'disabled' : '')">
+    <li data-bind="visible: $data === ($parent.initIndex() + 1), css: ($parent.currentPage() === 1 ? 'disabled' : '')">
         <a href="#" aria-label="Previous" data-bind="click: ($parent.currentPage() > 1) ? $parent.previousPage : null">
             <span aria-hidden="true">&laquo;</span>
         </a>

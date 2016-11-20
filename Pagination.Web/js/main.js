@@ -1,99 +1,68 @@
-﻿/// <reference path="libs/jquery-3.1.0.min.js" />
-/// <reference path="libs/knockout-3.4.1.js" />
-
-var vm;
-(function ($, ko, $body) {
-    "use strict";
-
-    var pages = [];
-    var maxVisiblePages = 10;
-
-    // start: mocks
-    for (var i = 1; i <= 53; i ++) {
-        pages.push(i);
-    }
-    // end: mocks
-
-    vm = {
-        pages: ko.observableArray(pages),
-        visiblePages: ko.observableArray([]),
-        currentPage: ko.observable(1),
-        maxVisiblePages: ko.observable(maxVisiblePages),
-        initIndex: ko.observable(0),
-        endIndex: ko.observable(maxVisiblePages - 1),
-
-        // actions
-        changePage: changePage,
-        nextPage: nextPage,
-        previousPage: previousPage,
-        nextBatch: nextBatch,
-        previousBatch: previousBatch
-    };
-
-    // computed
-    vm.totalPages = ko.computed(function() {
-        return this.pages().length;
-    }, vm);
-
-    // start templates
-   $.get("/templates/ko-templates.html", function (response) {
-        console.log("templates loaded");
-        $body.append(response);
-        ko.applyBindings(vm);
-   });
-    init();
-
-    //////
-
-    function init() {
-        changePage(1);
-    }
-
-    function changePage(p) {
-        console.log("^changePage clicked" + p);
-        vm.currentPage(p);
-
-        var end = Math.ceil(p / maxVisiblePages) * maxVisiblePages;
-        var start = end > maxVisiblePages
-            ? end - maxVisiblePages
-            : 0;
-
-        vm.initIndex(start);
-        vm.endIndex(end);
-        vm.visiblePages(vm.pages.slice(start, end));
-    }
-
-    function nextPage() {
-        var currPage = vm.currentPage() + 1;
-        if (currPage > vm.totalPages()) {
-            currPage = vm.totalPages();
+var PaginationViewModel = (function () {
+    function PaginationViewModel() {
+        var _this = this;
+        var maxVisiblePages = 10;
+        // start: mocks data
+        var pages = [];
+        for (var i = 1; i <= 53; i++) {
+            pages.push(i);
         }
-
-        changePage(currPage);
+        // end: mocks data
+        this.pages = ko.observableArray(pages);
+        this.visiblePages = ko.observableArray([]);
+        this.currentPage = ko.observable(1);
+        this.maxVisiblePages = ko.observable(maxVisiblePages);
+        this.initIndex = ko.observable(0);
+        this.endIndex = ko.observable(maxVisiblePages - 1);
+        this.totalPages = ko.computed(function () {
+            var self = this;
+            return self.pages().length;
+        }, this);
+        this.changePage = function (p) {
+            console.log("^changePage clicked" + p, _this);
+            _this.currentPage(p);
+            var end = Math.ceil(p / _this.maxVisiblePages()) * _this.maxVisiblePages();
+            var start = end > _this.maxVisiblePages()
+                ? end - _this.maxVisiblePages()
+                : 0;
+            _this.initIndex(start);
+            _this.endIndex(end);
+            _this.visiblePages(_this.pages.slice(start, end));
+        };
+        this.nextPage = function () {
+            var currPage = _this.currentPage() + 1;
+            if (currPage > _this.totalPages()) {
+                currPage = _this.totalPages();
+            }
+            _this.changePage(currPage);
+        };
+        this.previousPage = function () {
+            var currPage = _this.currentPage() - 1;
+            if (currPage <= 0) {
+                currPage = 1;
+            }
+            _this.changePage(currPage);
+        };
+        this.nextBatch = function () {
+            var currPage = _this.calculatePage(true);
+            _this.changePage(currPage);
+        };
+        this.previousBatch = function () {
+            var currPage = _this.calculatePage(false);
+            _this.changePage(currPage);
+        };
+        this.calculatePage = function (isNext) {
+            return isNext
+                ? _this.initIndex() + _this.maxVisiblePages() + 1
+                : _this.endIndex() - _this.maxVisiblePages();
+        };
+        this.changePage(1);
     }
-
-    function previousPage() {
-        var currPage = vm.currentPage() - 1;
-        if (currPage <= 0) {
-            currPage = 1;
-        }
-
-        changePage(currPage);
-    }
-
-    function nextBatch() {
-        var currPage = vm.initIndex() +
-            vm.maxVisiblePages() +
-            1;
-
-        changePage(currPage);
-    }
-
-    function previousBatch() {
-        var currPage = (vm.endIndex() -
-            vm.maxVisiblePages());
-
-        changePage(currPage);
-    }
-
-})(jQuery, ko, $("body"));
+    return PaginationViewModel;
+}());
+$.get("/templates/ko-templates.html", function (response) {
+    console.log("templates loaded");
+    $("body").append(response);
+    ko.applyBindings(new PaginationViewModel());
+});
+//# sourceMappingURL=main.js.map

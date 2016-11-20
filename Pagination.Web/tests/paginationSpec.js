@@ -1,12 +1,14 @@
-﻿/// <reference path="c:\Src\Pagination\Pagination.Web\js/libs/jquery-3.1.0.min.js" />
+﻿/// <reference path="../js/libs/jquery-3.1.0.min.js" />
 
-/// <reference path="c:\Src\Pagination\Pagination.Web\js/libs/knockout-3.4.1.js" />
-/// <reference path="c:\Src\Pagination\Pagination.Web\js/main.js" />
+/// <reference path="../js/libs/knockout-3.4.1.js" />
+/// <reference path="../js/main.js" />
+
+var vm;
 
 module("pagination",
 {
     setup: function() {
-
+        vm = new PaginationViewModel();
     },
     teardown: function() {
 
@@ -60,4 +62,50 @@ test("52 page should display second batch",
         vm.changePage(52);
 
         deepEqual(vm.visiblePages(), [51, 52, 53]);
+    });
+
+module("batch navigation",
+{
+    setup: function() {
+        vm = new PaginationViewModel();
+    },
+    teardown: function() {
+
+    }
+});
+
+test("given current page 1 when next ellipsis then page should switch to 11",
+    function() {
+        vm.changePage(1);
+
+        var actual = vm.calculatePage(true);
+
+        strictEqual(actual, 11);
+    });
+
+test("given current page 23 when next ellipsis then page should switch to 31",
+    function () {
+        vm.changePage(23);
+
+        var actual = vm.calculatePage(true);
+
+        strictEqual(actual, 31);
+    });
+
+test("given current page 12 when previous ellipsis then page should switch to 1",
+    function() {
+        vm.changePage(12);
+
+        var actual = vm.calculatePage(false);
+
+        strictEqual(actual, 10);
+    });
+
+test("given current page 23 when previous ellipsis then page should switch to 20",
+    function () {
+        vm.changePage(23);
+
+        var actual = vm.calculatePage(false);
+
+        strictEqual(actual, 20);
     });
