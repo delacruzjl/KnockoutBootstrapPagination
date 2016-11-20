@@ -123,7 +123,6 @@ module App {
             };
 
             this.changePage = (p: number): void => {
-                console.debug("//todo: pagination Clicked, (refresh list?) with page: " + p);
                 if (p === this.currentPage()) {
                     //do nothing
                     return;
