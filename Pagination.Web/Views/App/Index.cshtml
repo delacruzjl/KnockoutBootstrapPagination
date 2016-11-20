@@ -10,23 +10,23 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="apple-touch-icon" href="@Url.Content("~/apple-touch-icon.png")">
-    <link rel="stylesheet" href="@Url.Content("~/css/normalize.css")"/>
 
-    <!-- bootstrap -->
-    <link rel="stylesheet" href="//ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.css"  />
+    @Styles.Render(
+    "~/content/normalize",
+    "~/content/bootstrap",
+    "~/content/site")
 
-    <!-- custom -->
-    <link rel="stylesheet" href="@Url.Content("~/css/main.css")">
-
-    <script src="//ajax.aspnetcdn.com/ajax/modernizr/modernizr-2.6.2.js"></script>
-    <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-3.1.1.min.js"></script>
-    <script src="//ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js"></script>
+    <!-- top scripts-->
+    @Scripts.Render(
+        "~/bundles/modernizr",
+        "~/bundles/jquery",
+        "~/bundles/knockout")
 </head>
 <body>
     <!--[if lte IE 9]>
         <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
     <![endif]-->
-<!-- Add your site or application content here -->
+    <!-- Add your site or application content here -->
 
     <div class="container">
         <div class="page-header">
@@ -40,33 +40,41 @@
             </hgroup>
         </div>
 
-        <div class="row">
+        <div class="alert alert-info" data-bind="visible: pageStatus() === 1">
+            Loading data
+        </div>
+
+        <div class="alert alert-danger" data-bind="visible: pageStatus() === 2">
+            Something happened on the server side, check your logs.
+        </div>
+
+        <section data-bind="visible: pageStatus() === 0">
+            <div class="row">
 
                 <nav aria-label="Page navigation">
                     <ul class="pagination" data-bind="template: {name: 'page-template', foreach: pagination.visiblePages }"></ul>
                 </nav>
-
-
-        </div>
-
-        <div class="row">
-            <div class="col-md-4">
-                <table class="table table-strip table-responsive">
-                    <tr>
-                        <th>Id</th>
-                        <th>Text</th>
-                    </tr>
-                    <tbody data-bind="template: { name: 'table-data', foreach: source } "></tbody>
-                </table>
             </div>
-        </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <table class="table table-strip table-responsive">
+                        <tr>
+                            <th>Id</th>
+                            <th>Text</th>
+                        </tr>
+                        <tbody data-bind="template: { name: 'table-data', foreach: source } "></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
     </div>
 
-
-
-    <script src="//ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"></script>
-    <script src="@Url.Content("~/js/pagination-viewmodel-ts.js")"></script>
-    <script src="@Url.Content("~/js/demo-viewmodel-ts.js")"></script>
+    @Scripts.Render(
+        "~/bundles/bootstrap",
+        "~/bundles/app"
+    )
 
 </body>
+
 </html>
