@@ -118,6 +118,7 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <TypeScriptCompile Include="mvvm\00-demo-enumerators-ts.ts" />
     <TypeScriptCompile Include="mvvm\02-demo-viewmodel-ts.ts" />
     <TypeScriptCompile Include="mvvm\01-pagination-viewmodel-ts.ts" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

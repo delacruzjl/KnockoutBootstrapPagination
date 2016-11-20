@@ -1,8 +1,4 @@
-﻿enum PageStatus {
-    done, loading, errors
-}
-
-interface IData {
+﻿interface IData {
     Id: number,
     Text: string
 }
@@ -10,7 +6,7 @@ interface IData {
 interface IDemoViewModel {
     source: KnockoutObservableArray<IData>,
     pagination: IPaginationViewModel,
-    pageStatus: KnockoutObservable<PageStatus>
+    pageStatus: KnockoutObservable<App.PageStatus>
 }
 
 module App {
