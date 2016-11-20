@@ -8,10 +8,10 @@ var vm;
 module("pagination",
 {
     setup: function() {
-        vm = new PaginationViewModel();
+        vm = new App.PaginationViewModel();
     },
     teardown: function() {
-
+        vm = null;
     }
 });
 
@@ -67,10 +67,10 @@ test("52 page should display second batch",
 module("batch navigation",
 {
     setup: function() {
-        vm = new PaginationViewModel();
+        vm = new App.PaginationViewModel();
     },
     teardown: function() {
-
+        vm = null;
     }
 });
 

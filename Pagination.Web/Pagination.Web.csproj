@@ -102,6 +102,9 @@
     <Content Include="js\libs\modernizr-2.8.3.min.js" />
     <TypeScriptCompile Include="js\main.ts" />
     <Content Include="templates\ko-templates.html" />
+    <Content Include="tests\libs\qunit.css" />
+    <Content Include="tests\libs\qunit.js" />
+    <Content Include="tests\paginationSpec.html" />
     <Content Include="tests\paginationSpec.js" />
     <Content Include="Web.config" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
