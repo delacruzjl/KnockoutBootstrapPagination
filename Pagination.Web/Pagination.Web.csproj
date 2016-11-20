@@ -100,7 +100,8 @@
     <Content Include="js\libs\jquery-3.1.0.min.js" />
     <Content Include="js\libs\knockout-3.4.1.js" />
     <Content Include="js\libs\modernizr-2.8.3.min.js" />
-    <TypeScriptCompile Include="js\main-ts.ts" />
+    <TypeScriptCompile Include="js\demo-viewmodel-ts.ts" />
+    <TypeScriptCompile Include="js\pagination-viewmodel-ts.ts" />
     <Content Include="templates\ko-pagination-template.html" />
     <Content Include="tests\libs\qunit.css" />
     <Content Include="tests\libs\qunit.js" />
@@ -132,6 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Controllers\Api\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>

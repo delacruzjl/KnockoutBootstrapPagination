@@ -1,27 +1,35 @@
 ﻿<script type="text/html" id="page-template">
-    <li data-bind="css: $parent.enablePrevArrow() ? '' : 'disabled', visible: $parent.showPrevArrow($data)">
-        <a href="#" aria-label="Previous" data-bind="click: $parent.onPrevClick">
+    <li data-bind="css: $parent.pagination.enablePrevArrow() ? '' : 'disabled', visible: $parent.pagination.showPrevArrow($data)">
+        <a href="#" aria-label="Previous" data-bind="click: $parent.pagination.onPrevClick">
             <span aria-hidden="true">&laquo;</span>
         </a>
     </li>
 
-    <li data-bind="visible: $parent.showPrevEllipsis($data)">
-        <a href="#" data-bind="click: $parent.previousBatch">...</a>
+    <li data-bind="visible: $parent.pagination.showPrevEllipsis($data)">
+        <a href="#" data-bind="click: $parent.pagination.previousBatch">...</a>
     </li>
 
-    <li data-bind="css: ($data === $parent.currentPage() ? 'active': '')">
-        <a href="#" data-bind="text: $data, click: $parent.changePage">
+    <li data-bind="css: ($data === $parent.pagination.currentPage() ? 'active': '')">
+        <a href="#" data-bind="text: $data, click: $parent.pagination.changePage">
 
         </a>
     </li>
 
-    <li data-bind="visible: $parent.showNextEllipsis($data)">
-        <a href="#" data-bind="click: $parent.nextBatch">...</a>
+    <li data-bind="visible: $parent.pagination.showNextEllipsis($data)">
+        <a href="#" data-bind="click: $parent.pagination.nextBatch">...</a>
     </li>
 
-    <li data-bind="css: $parent.enableNextArrow($data) ? '' : 'disabled', visible: $parent.showNextArrow($data)">
-        <a href="#" aria-label="Next" data-bind="click: $parent.onNextClick">
+    <li data-bind="css: $parent.pagination.enableNextArrow($data) ? '' : 'disabled', visible: $parent.pagination.showNextArrow($data)">
+        <a href="#" aria-label="Next" data-bind="click: $parent.pagination.onNextClick">
             <span aria-hidden="true">&raquo;</span>
         </a>
     </li>
+</script>
+
+<!-- Demo Only -->
+<script type="text/html" id="table-data">
+    <tr>
+        <td data-bind="text: $data.Id"></td>
+        <td data-bind="text: $data.Text"></td>
+    </tr>
 </script>

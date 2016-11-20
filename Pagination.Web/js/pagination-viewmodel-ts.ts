@@ -33,46 +33,46 @@ module App {
     export class PaginationViewModel implements IPaginationViewModel {
         constructor(private size?: number) {
             const maxVisiblePages = 10;
-
-            //todo: calculate size based upon JSON data or whatever list it's being displayed.
-
             this.totalPages = ko.observable(size || 0);
             this.currentPage = ko.observable(1);
             this.maxVisiblePages = ko.observable(maxVisiblePages);
 
             //start: computed
-            this.endIndex = ko.computed(function (): any {
-                var self = this;
+            this.endIndex = ko.computed(function(): any {
+                    var self = this;
 
-                var end = Math.ceil(self.currentPage() / self.maxVisiblePages()) * self.maxVisiblePages();
-                return end;
-            }, this);
+                    var end = Math.ceil(self.currentPage() / self.maxVisiblePages()) * self.maxVisiblePages();
+                    return end;
+                },
+                this);
 
-            this.initIndex = ko.computed(function (): any {
-                var self = this;
+            this.initIndex = ko.computed(function(): any {
+                    var self = this;
 
-                var start = self.endIndex() > self.maxVisiblePages()
-                    ? self.endIndex() - self.maxVisiblePages()
-                    : 0;
+                    var start = self.endIndex() > self.maxVisiblePages()
+                        ? self.endIndex() - self.maxVisiblePages()
+                        : 0;
 
-                return start;
+                    return start;
 
-            }, this);
+                },
+                this);
 
             this.pages = ko.computed(function(): any {
-                var self = this;
-                var pages = [];
+                    var self = this;
+                    var pages = [];
 
-                for (var i = 1; i <= parseInt(self.totalPages()); i++) {
-                    pages.push(i);
-                }
-                console.debug("recalculating pages");
-                return pages;
-            }, this);
+                    for (var i = 1; i <= parseInt(self.totalPages()); i++) {
+                        pages.push(i);
+                    }
+
+                    return pages;
+                },
+                this);
 
             this.visiblePages = ko.computed(function(): any {
-                var self = this;
-                return self
+                    var self = this;
+                    return self
                         .pages()
                         .slice(self.initIndex(), self.endIndex());
                 },
@@ -123,11 +123,11 @@ module App {
             };
 
             this.changePage = (p: number): void => {
+                console.debug("//todo: pagination Clicked, (refresh list?) with page: " + p);
                 if (p === this.currentPage()) {
                     //do nothing
                     return;
                 }
-                console.debug("//todo: pagination Clicked, (refresh list?) with page: " + p);
 
                 this.currentPage(p);
             };
@@ -139,7 +139,6 @@ module App {
                 if (currPage > totalPages) {
                     currPage = totalPages;
                 }
-                console.debug("next page triggered, this.currentPage:" + this.currentPage()  + ", currPage: " + currPage);
 
                 this.changePage(currPage);
             };
@@ -194,16 +193,10 @@ module App {
         calculatePage: (isNext: boolean) => number;
         showNextArrow: (p: number) => boolean;
         enableNextArrow: (p: number) => boolean;
-        onNextClick: (p: number) => void ;
+        onNextClick: (p: number) => void;
 
         private initialize(p: number): void {
             this.changePage(p);
         }
     }
-
-    $.get("/templates/ko-pagination-template.html",
-        response => {
- $("body").append(response);
-            ko.applyBindings(new PaginationViewModel());
-        });
 }
