@@ -28,7 +28,7 @@ namespace Pagination.Web {
                 .Include("~/scripts/knockout-{version}.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/app")
-                .IncludeDirectory("~/js/", "*-ts.js", true));
+                .IncludeDirectory("~/mvvm/", "*-ts.js", true));
         }
     }
 }

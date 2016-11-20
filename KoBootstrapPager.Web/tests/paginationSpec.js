@@ -1,7 +1,7 @@
-﻿/// <reference path="../js/libs/jquery-3.1.0.min.js" />
+﻿/// <reference path="../Scripts/jquery-3.1.1.min.js" />
 
-/// <reference path="../js/libs/knockout-3.4.1.js" />
-/// <reference path="../js/01-pagination-viewmodel-ts.js" />
+/// <reference path="../Scripts/knockout-3.4.0.debug.js" />
+/// <reference path="../mvvm/01-pagination-viewmodel-ts.js" />
 
 var vm;
 

@@ -118,8 +118,8 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <TypeScriptCompile Include="js\02-demo-viewmodel-ts.ts" />
-    <TypeScriptCompile Include="js\01-pagination-viewmodel-ts.ts" />
+    <TypeScriptCompile Include="mvvm\02-demo-viewmodel-ts.ts" />
+    <TypeScriptCompile Include="mvvm\01-pagination-viewmodel-ts.ts" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
