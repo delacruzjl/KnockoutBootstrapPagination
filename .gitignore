@@ -11,6 +11,9 @@
 *-ts.js
 *-ts.js.map
 
+# Publishing profiles
+*.pubxml
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
