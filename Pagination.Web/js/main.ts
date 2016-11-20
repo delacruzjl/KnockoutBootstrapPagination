@@ -1,11 +1,13 @@
 ﻿interface IPaginationViewModel {
-    pages: KnockoutObservableArray<number>,
-    visiblePages: KnockoutObservableArray<number>,
     currentPage: KnockoutObservable<number>,
     maxVisiblePages: KnockoutObservable<number>,
-    initIndex: KnockoutObservable<number>,
-    endIndex: KnockoutObservable<number>,
-    totalPages: KnockoutComputed<number>,
+    initIndex: KnockoutComputed<number>,
+    endIndex: KnockoutComputed<number>,
+    totalPages: KnockoutObservable<any>,
+
+    //computed
+    pages: KnockoutComputed<number[]>,
+    visiblePages: KnockoutComputed<number[]>,
 
     // actions
     changePage: (p: number) => void,
@@ -13,55 +15,132 @@
     previousPage: () => void,
     nextBatch: () => void,
     previousBatch: () => void,
-
-    // for testing only
+    showPrevArrow: (p: number) => boolean,
+    enablePrevArrow: (p: number) => boolean,
+    onPrevClick: (p: number) => void,
+    showPrevEllipsis: (p: number) => boolean,
+    showNextEllipsis: (p: number) => boolean,
+    enableNextArrow: (p: number) => boolean,
+    showNextArrow: (p: number) => boolean,
+    onNextClick: (p: number) => void,
+    // exposed for testing purposes only
     calculatePage: (isNext: boolean) => number
 }
 
 module App {
+    "use strict";
+
     export class PaginationViewModel implements IPaginationViewModel {
-        "use strict";
+        constructor(private size?: number) {
+            const maxVisiblePages = 10;
 
-        constructor() {
-            var maxVisiblePages = 10;
+            //todo: calculate size based upon JSON data or whatever list it's being displayed.
 
-            // start: mocks data
-            var pages = [];
-            for (var i = 1; i <= 53; i++) {
-                pages.push(i);
-            }
-            // end: mocks data
-
-            this.pages = ko.observableArray(pages);
-            this.visiblePages = ko.observableArray([]);
+            this.totalPages = ko.observable(size || 0);
             this.currentPage = ko.observable(1);
             this.maxVisiblePages = ko.observable(maxVisiblePages);
-            this.initIndex = ko.observable(0);
-            this.endIndex = ko.observable(maxVisiblePages - 1);
-            this.totalPages = ko.computed(function() {
-                    var self = this;
-                    return self.pages().length;
-                },
-                this);
-            this.changePage = (p: number): void => {
-                console.debug("TODO: pagination Clicked" + p, this);
-                this.currentPage(p);
 
-                var end = Math.ceil(p / this.maxVisiblePages()) * this.maxVisiblePages();
-                var start = end > this.maxVisiblePages()
-                    ? end - this.maxVisiblePages()
+            //start: computed
+            this.endIndex = ko.computed(function (): any {
+                var self = this;
+
+                if (self.currentPage() > parseInt(self.totalPages())) {
+                    self.currentPage(1);
+                }
+
+                var end = Math.ceil(self.currentPage() / self.maxVisiblePages()) * self.maxVisiblePages();
+                return end;
+            }, this);
+
+            this.initIndex = ko.computed(function (): any {
+                var self = this;
+
+                var start = self.endIndex() > self.maxVisiblePages()
+                    ? self.endIndex() - self.maxVisiblePages()
                     : 0;
 
-                this.initIndex(start);
-                this.endIndex(end);
-                this.visiblePages(this.pages.slice(start, end));
+                return start;
+
+            }, this);
+
+            this.pages = ko.computed(function(): any {
+                var self = this;
+                var pages = [];
+
+                for (var i = 1; i <= parseInt(self.totalPages()); i++) {
+                    pages.push(i);
+                }
+                console.debug("recalculating pages");
+                return pages;
+            }, this);
+
+            this.visiblePages = ko.computed(function(): any {
+                var self = this;
+                return self
+                        .pages()
+                        .slice(self.initIndex(), self.endIndex());
+                },
+                this);
+            //end: computed
+
+            //start: methods
+            this.showPrevArrow = (p: number): boolean => {
+                return p === (this.initIndex() + 1);
+            };
+            this.enablePrevArrow = (p: number): boolean => {
+                return this.currentPage() > 1;
+            };
+            this.onPrevClick = (p: number): void => {
+                return this.enablePrevArrow(p)
+                    ? this.previousPage()
+                    : null;
+            };
+            this.showPrevEllipsis = (p: number): boolean => {
+                return this.currentPage() > this.maxVisiblePages() &&
+                    p === (this.initIndex() + 1);
+            };
+            this.showNextEllipsis = (p: number): boolean => {
+                return this.currentPage() < (this.endIndex() + 1) &&
+                    p === this.endIndex() &&
+                    parseInt(this.totalPages()) > this.maxVisiblePages();
+            };
+            this.showNextArrow = (p: number): boolean => {
+                var totalPages = parseInt(this.totalPages());
+                var endIndex = this.endIndex() > totalPages
+                    ? totalPages
+                    : this.endIndex();
+
+                return p === endIndex;
+            };
+
+            this.onNextClick = (p: number): void => {
+                return this.enableNextArrow(p)
+                    ? this.nextPage()
+                    : null;
+            };
+
+            this.enableNextArrow = (p: number): boolean => {
+                return this.currentPage() < parseInt(this.totalPages());
+            };
+
+            this.changePage = (p: number): void => {
+                if (p === this.currentPage()) {
+                    //do nothing
+                    return;
+                }
+                console.debug("//todo: pagination Clicked, (refresh list?) with page: " + p);
+
+                this.currentPage(p);
             };
 
             this.nextPage = (): void => {
                 var currPage = this.currentPage() + 1;
-                if (currPage > this.totalPages()) {
-                    currPage = this.totalPages();
+                var totalPages = parseInt(this.totalPages());
+
+                if (currPage > totalPages) {
+                    currPage = totalPages;
                 }
+                console.debug("next page triggered, this.currentPage:" + this.currentPage()  + ", currPage: " + currPage);
 
                 this.changePage(currPage);
             };
@@ -90,26 +169,40 @@ module App {
                     ? this.initIndex() + this.maxVisiblePages() + 1
                     : this.endIndex() - this.maxVisiblePages();
             };
+            //end: methods
 
-            this.changePage(1);
+            // startup
+            this.initialize(1);
         }
 
-        pages: KnockoutObservableArray<number>;
-        visiblePages: KnockoutObservableArray<number>;
         currentPage: KnockoutObservable<number>;
         maxVisiblePages: KnockoutObservable<number>;
-        initIndex: KnockoutObservable<number>;
-        endIndex: KnockoutObservable<number>;
-        totalPages: KnockoutComputed<number>;
+        totalPages: KnockoutObservable<any>;
+        initIndex: KnockoutComputed<number>;
+        endIndex: KnockoutComputed<number>;
+        pages: KnockoutComputed<number[]>;
+        visiblePages: KnockoutComputed<number[]>;
+        showPrevArrow: (p: number) => boolean;
+        enablePrevArrow: (p: number) => boolean;
+        onPrevClick: (p: number) => void;
+        showPrevEllipsis: (p: number) => boolean;
+        showNextEllipsis: (p: number) => boolean;
         changePage: (p: number) => void;
         nextPage: () => void;
         previousPage: () => void;
         nextBatch: () => void;
         previousBatch: () => void;
         calculatePage: (isNext: boolean) => number;
+        showNextArrow: (p: number) => boolean;
+        enableNextArrow: (p: number) => boolean;
+        onNextClick: (p: number) => void ;
+
+        private initialize(p: number): void {
+            this.changePage(p);
+        }
     }
 
-    $.get("/templates/ko-templates.html",
+    $.get("/templates/ko-pagination-template.html",
         response => {
  $("body").append(response);
             ko.applyBindings(new PaginationViewModel());

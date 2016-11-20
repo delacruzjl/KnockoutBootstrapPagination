@@ -7,8 +7,8 @@ var vm;
 
 module("pagination",
 {
-    setup: function() {
-        vm = new App.PaginationViewModel();
+    setup: function () {
+        vm = new App.PaginationViewModel(53);
     },
     teardown: function() {
         vm = null;
@@ -67,7 +67,7 @@ test("52 page should display second batch",
 module("batch navigation",
 {
     setup: function() {
-        vm = new App.PaginationViewModel();
+        vm = new App.PaginationViewModel(53);
     },
     teardown: function() {
         vm = null;
@@ -109,3 +109,119 @@ test("given current page 23 when previous ellipsis then page should switch to 20
 
         strictEqual(actual, 20);
     });
+
+module("previous arrow", {
+    setup: function () {
+        vm = new App.PaginationViewModel(53);
+    },
+    teardown: function () {
+        vm = null;
+    }
+});
+
+test("should be enabled if page greater than 1",
+    function () {
+        vm.currentPage(3);
+        var actual = vm.enablePrevArrow(3);
+        ok(!!actual);
+    });
+
+test("should be disabled if page greater equals 1",
+    function () {
+        vm.currentPage(1);
+        var actual = vm.enablePrevArrow(1);
+        ok(!actual);
+    });
+
+test("should be displayed if page is 11",
+    function() {
+        vm.currentPage(11);
+        var actual = vm.showPrevArrow(11);
+        ok(!!actual, "returned: " + actual + ", initIndex:" + vm.initIndex());
+    });
+
+test("should be visible only once", 3,
+    function () {
+        for (var i = 1; i <= 3; i++) {
+            vm.currentPage(i);
+            var actual = vm.showPrevArrow(i);
+            ok((!!actual && i === 1) || (!actual && i > 1), "worked for page number: " + i);
+        }
+    });
+
+module("previous batch ellipsis", {
+    setup: function () {
+        vm = new App.PaginationViewModel(53);
+        vm.maxVisiblePages(5);
+    },
+    teardown: function () {
+        vm = null;
+    }
+});
+
+
+test("should be hidden if page less than maxVisiblePages",
+    function () {
+        vm.currentPage(3);
+        var actual = vm.showPrevEllipsis(3);
+        ok(!actual);
+    });
+
+test("should be visible if page greater than or equals to maxVisiblePages",
+    function () {
+        vm.currentPage(6);
+        var actual = vm.showPrevEllipsis(6);
+        ok(!!actual);
+    });
+
+test("should be visible only once", 4,
+    function () {
+        for (var i = 6; i <= 9; i++) {
+            vm.currentPage(i);
+            var actual = vm.showPrevEllipsis(i);
+            ok((!!actual && i > vm.maxVisiblePages()) || (!actual && i > vm.maxVisiblePages()), "worked for page number: " + i);
+        }
+    });
+
+module("NEXT batch ellipsis", {
+    setup: function () {
+        vm = new App.PaginationViewModel(53);
+        vm.maxVisiblePages(5);
+    },
+    teardown: function () {
+        vm = null;
+    }
+});
+
+
+test("should be hidden if the page is not maxVisiblePages",
+    function () {
+        vm.currentPage(3);
+        var actual = vm.showNextEllipsis(3);
+        ok(!actual, "actual: " + actual + "page: 3" + " endIndex: " + vm.endIndex() + " totalPages: " + vm.totalPages());
+    });
+
+test("should be displayed if the page is maxVisiblePages",
+    function () {
+        var p = 4;
+        vm.currentPage(p);
+        var actual = vm.showNextEllipsis(p);
+        ok(!actual, "page: " + p + " endIndex: " + vm.endIndex() + " totalPages: " + vm.totalPages());
+    });
+
+test("should be hidden if page greater than or equals to maxVisiblePages and no more pages exist",
+    function () {
+        vm.currentPage(51);
+        var actual = vm.showNextEllipsis(51);
+        ok(!actual, "actual: " + actual + "page: 51" + " endIndex: " + vm.endIndex() + " totalPages: " + vm.totalPages());
+    });
+
+test("should be visible only once", 4,
+    function () {
+        for (var i = 6; i <= 9; i++) {
+            vm.currentPage(i);
+            var actual = vm.showNextEllipsis(i);
+            ok((!!actual && i > vm.maxVisiblePages()) || (!actual && i > vm.maxVisiblePages()), "worked for page number: " + i);
+        }
+    });
+

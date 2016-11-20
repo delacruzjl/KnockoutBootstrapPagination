@@ -101,7 +101,7 @@
     <Content Include="js\libs\knockout-3.4.1.js" />
     <Content Include="js\libs\modernizr-2.8.3.min.js" />
     <TypeScriptCompile Include="js\main.ts" />
-    <Content Include="templates\ko-templates.html" />
+    <Content Include="templates\ko-pagination-template.html" />
     <Content Include="tests\libs\qunit.css" />
     <Content Include="tests\libs\qunit.js" />
     <Content Include="tests\paginationSpec.html" />

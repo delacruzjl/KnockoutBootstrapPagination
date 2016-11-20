@@ -37,9 +37,13 @@
         </div>
         <div class="row">
             <hgroup>
-                <h4 data-bind="text: totalPages"></h4>
+                <h4 data-bind="text: pages().length"></h4>
                 <h5 data-bind="text: visiblePages().length"></h5>
             </hgroup>
+        </div>
+
+        <div class="row">
+            <input type="text" class="form-control" data-bind="value: totalPages, valueUpdate: 'afterkeydown'" />
         </div>
 
         <div class="row">
