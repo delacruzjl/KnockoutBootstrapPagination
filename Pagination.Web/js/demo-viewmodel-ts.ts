@@ -14,35 +14,27 @@ module App {
     class DemoViewModel implements IDemoViewModel {
         constructor() {
             this.source = ko.observableArray([]);
-            this.pagination = new PaginationViewModel(this.source.length);
+            this.pagination = new PaginationViewModel(this.source.length, refreshData);
         }
 
         source: KnockoutObservableArray<IData>;
         pagination: IPaginationViewModel;
     }
 
+    var vm = new DemoViewModel();
+    function refreshData(p?: number): void {
+        $.get("/app/data/?page=" + p,
+            (response) => {
+                vm.source(response.Rows);
+                var totalPages = Math.ceil(response.Total / vm.pagination.maxVisiblePages());
+                vm.pagination.totalPages(totalPages);
+            });
+    };
+
     // load templates first
     $.get("/templates/ko-pagination-template.html",
         response => {
             $("body").append(response);
-            var vm = new DemoViewModel();
-
-            var refreshData = (p?: number): void => {
-                if (p === vm.pagination.currentPage()) {
-                    //do nothing
-                    return;
-                }
-
-                vm.pagination.currentPage(p || 1);
-                $.get("/app/data/?page=" + p,
-                    (response) => {
-                        vm.source(response.Rows);
-                        var totalPages = Math.ceil(response.Total / vm.pagination.maxVisiblePages());
-                        vm.pagination.totalPages(totalPages);
-                    });
-            };
-
-            vm.pagination.changePage = refreshData;
             ko.applyBindings(vm);
             refreshData();
         });
