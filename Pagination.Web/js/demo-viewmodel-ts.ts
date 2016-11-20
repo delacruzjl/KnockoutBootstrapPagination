@@ -22,6 +22,21 @@ module App {
     }
 
     var vm = new DemoViewModel();
+
+    // load templates first
+    $.get("/templates/ko-pagination-template.html",
+        response => {
+            $("body").append(response);
+
+            // start knockoutJS
+            ko.applyBindings(vm);
+
+            // initialize page
+            refreshData();
+        });
+
+    //////////
+
     function refreshData(p?: number): void {
         $.get("/app/data/?page=" + p,
             (response) => {
@@ -30,12 +45,4 @@ module App {
                 vm.pagination.totalPages(totalPages);
             });
     };
-
-    // load templates first
-    $.get("/templates/ko-pagination-template.html",
-        response => {
-            $("body").append(response);
-            ko.applyBindings(vm);
-            refreshData();
-        });
 }
