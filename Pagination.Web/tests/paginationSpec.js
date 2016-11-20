@@ -1,7 +1,7 @@
 ﻿/// <reference path="../js/libs/jquery-3.1.0.min.js" />
 
 /// <reference path="../js/libs/knockout-3.4.1.js" />
-/// <reference path="../js/main.js" />
+/// <reference path="../js/main-ts.js" />
 
 var vm;
 

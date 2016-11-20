@@ -44,10 +44,6 @@ module App {
             this.endIndex = ko.computed(function (): any {
                 var self = this;
 
-                if (self.currentPage() > parseInt(self.totalPages())) {
-                    self.currentPage(1);
-                }
-
                 var end = Math.ceil(self.currentPage() / self.maxVisiblePages()) * self.maxVisiblePages();
                 return end;
             }, this);
@@ -100,9 +96,12 @@ module App {
                     p === (this.initIndex() + 1);
             };
             this.showNextEllipsis = (p: number): boolean => {
+                var totalPages = parseInt(this.totalPages());
+
                 return this.currentPage() < (this.endIndex() + 1) &&
                     p === this.endIndex() &&
-                    parseInt(this.totalPages()) > this.maxVisiblePages();
+                    this.endIndex() < totalPages &&
+                    totalPages > this.maxVisiblePages();
             };
             this.showNextArrow = (p: number): boolean => {
                 var totalPages = parseInt(this.totalPages());
