@@ -31,9 +31,9 @@ module App {
     "use strict";
 
     export class PaginationViewModel implements IPaginationViewModel {
-        constructor(private size?: number, public callback?: (p?: number) => void) {
+        constructor(public callback?: (p?: number) => void) {
             const maxVisiblePages = 10;
-            this.totalPages = ko.observable(size || 0);
+            this.totalPages = ko.observable(0);
             this.currentPage = ko.observable(1);
             this.maxVisiblePages = ko.observable(maxVisiblePages);
 
@@ -129,7 +129,10 @@ module App {
                 }
 
                 this.currentPage(p);
-                this.callback(p);
+
+                if (!!this.callback) {
+                    this.callback(p);
+                }
             };
 
             this.nextPage = (): void => {

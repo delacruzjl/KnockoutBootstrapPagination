@@ -8,7 +8,8 @@ var vm;
 module("pagination",
 {
     setup: function () {
-        vm = new App.PaginationViewModel(53);
+        vm = new App.PaginationViewModel();
+        vm.totalPages(53);
     },
     teardown: function() {
         vm = null;
@@ -67,7 +68,8 @@ test("52 page should display second batch",
 module("batch navigation",
 {
     setup: function() {
-        vm = new App.PaginationViewModel(53);
+        vm = new App.PaginationViewModel();
+        vm.totalPages(53);
     },
     teardown: function() {
         vm = null;
@@ -112,7 +114,8 @@ test("given current page 23 when previous ellipsis then page should switch to 20
 
 module("previous arrow", {
     setup: function () {
-        vm = new App.PaginationViewModel(53);
+        vm = new App.PaginationViewModel();
+        vm.totalPages(53);
     },
     teardown: function () {
         vm = null;
@@ -151,7 +154,8 @@ test("should be visible only once", 3,
 
 module("previous batch ellipsis", {
     setup: function () {
-        vm = new App.PaginationViewModel(53);
+        vm = new App.PaginationViewModel();
+        vm.totalPages(53);
         vm.maxVisiblePages(5);
     },
     teardown: function () {
@@ -185,7 +189,8 @@ test("should be visible only once", 4,
 
 module("NEXT batch ellipsis", {
     setup: function () {
-        vm = new App.PaginationViewModel(53);
+        vm = new App.PaginationViewModel();
+        vm.totalPages(53);
         vm.maxVisiblePages(5);
     },
     teardown: function () {

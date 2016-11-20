@@ -15,13 +15,11 @@ interface IDemoViewModel {
 
 module App {
     "use strict";
-
-
     class DemoViewModel implements IDemoViewModel {
         constructor() {
             this.pageStatus = ko.observable(PageStatus.done);
             this.source = ko.observableArray([]);
-            this.pagination = new PaginationViewModel(this.source.length, refreshData);
+            this.pagination = new PaginationViewModel(refreshData);
 
             // defaults to 10, but can be customized.
             this.pagination.maxVisiblePages(15);
