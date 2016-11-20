@@ -8,7 +8,7 @@ namespace Pagination.Web.Controllers {
             return View();
         }
 
-        public JsonResult Data(int page = 1) {
+        public JsonResult Data(int page = 1, int size = 10) {
             var p = page - 1;
             p = p < 0 ? 0 : p;
 
@@ -23,8 +23,8 @@ namespace Pagination.Web.Controllers {
             var output = new {
                 Total = fakes.Count,
                 Rows = fakes.OrderBy(_ => _.Id)
-                    .Skip(p*10)
-                    .Take(10)
+                    .Skip(p* size)
+                    .Take(size)
             };
 
             return Json(output, JsonRequestBehavior.AllowGet);

@@ -22,6 +22,9 @@ module App {
             this.pageStatus = ko.observable(PageStatus.done);
             this.source = ko.observableArray([]);
             this.pagination = new PaginationViewModel(this.source.length, refreshData);
+
+            // defaults to 10, but can be customized.
+            this.pagination.maxVisiblePages(15);
         }
 
         pageStatus: KnockoutObservable<PageStatus>;
@@ -47,12 +50,18 @@ module App {
 
     function refreshData(p?: number): void {
         vm.pageStatus(PageStatus.loading);
-        $.get("/app/data/?page=" + p,
-        (response) => {
-            vm.source(response.Rows);
-            var totalPages = Math.ceil(response.Total / vm.pagination.maxVisiblePages());
-            vm.pagination.totalPages(totalPages);
-            vm.pageStatus(PageStatus.done);
-        });
+        var url = "/app/data/?page=" + p;
+        url += "&size=" + vm.pagination.maxVisiblePages();
+        $.get(url, populate);
+    }
+
+    function populate(response) {
+        // data to display
+        vm.source(response.Rows);
+
+        // pagination info
+        var totalPages = Math.ceil(response.Total / vm.pagination.maxVisiblePages());
+        vm.pagination.totalPages(totalPages);
+        vm.pageStatus(PageStatus.done);
     }
 }
