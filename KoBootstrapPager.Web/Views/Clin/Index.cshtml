@@ -74,7 +74,7 @@
                                             <input type="text" class="form-control"
                                                    data-bind="value: clin().clinAmount, valueUpdate: 'keyup', event: { keyup: updateClinPercent }" />
                                             <span class="input-group-addon">
-                                                <button data-bind="enable: clinValid, click: addClin"> Add</button>
+                                                <button data-bind="enable: validClin, click: addClin"> Add</button>
                                             </span>
                                         </div>
 
@@ -163,7 +163,7 @@
             <div class="col-md-1">
                 <!-- class="btn btn-primary btn-lg" -->
                 <button type="button"
-                        data-bind="click: $root.openEditModal, visible: $root.addSlinVisible($data)">
+                        data-bind="click: $root.openEditModal, visible: $root.visibleAddSlin($data)">
                     <i class="fa fa-plus"></i>
                 </button>
 
@@ -207,10 +207,10 @@
                     <input type="text" class="form-control"
                            data-bind="value: clinAmount, valueUpdate: 'keyup', event: { keyup: $root.updateClinPercent }" />
                     <span class="input-group-addon">
-                        <button data-bind="click: $root.updateClin">
+                        <button data-bind="click: $root.updateClin, enable: $root.validUpdateClin($data)">
                             <i class="fa fa-floppy-o"></i>
                         </button>
-                        <button data-bind="click: $root.cancelEditClin">
+                        <button data-bind="click: $root.undoClinChanges">
                             <i class="fa fa-ban"></i>
                         </button>
                     </span>
@@ -234,7 +234,7 @@
             </div>
             <div class="col-md-1">
                 <span class="text-danger" style="cursor: pointer;" 
-                      data-bind="click: $parent.removeSlin.bind($parent.slins, $data)">
+                      data-bind="click: function(){ $root.removeSlinToClin($parent, $data) }">
 
                     <i class="fa fa-remove"></i>
                 </span>

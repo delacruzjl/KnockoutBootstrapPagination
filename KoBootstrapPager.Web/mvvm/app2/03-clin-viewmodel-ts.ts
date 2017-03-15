@@ -6,7 +6,7 @@
         $slinModal: JQuery;
         clin: KnockoutObservable<Clin>;
         clinRemaining: KnockoutComputed<number>;
-        clinValid: KnockoutComputed<boolean>;
+        validClin: KnockoutComputed<boolean>;
         clins: KnockoutObservableArray<any>;
         slin: KnockoutObservable<Slin>;
         editedClin: KnockoutObservable<Clin>;
@@ -15,14 +15,16 @@
         addClin: () => void;
         removeClin: (clin: Clin) => void;
         updateClin: (clin: Clin) => void;
-        cancelEditClin: (clin: Clin) => void;
+        undoClinChanges: (clin: Clin) => void;
         addSlinToClin: (clin: Clin) => void;
         openEditModal: (clin: Clin) => void;
         updateSlinAmount: () => void;
         updateSlinPercent: () => void;
         availableCategories: KnockoutObservableArray<Category>;
         validSlin: (slin: Slin) => boolean;
-        addSlinVisible: (clin: Clin) => boolean;
+        visibleAddSlin: (clin: Clin) => boolean;
+        removeSlinToClin: (clin: Clin, slin: Slin) => void;
+        validUpdateClin: (clin: Clin) => boolean;
         
         constructor(private svc: ClinService, fakeTotalAmount: number) {
             var self = this;
@@ -36,19 +38,23 @@
             self.clinRemaining = ko.computed(calculateRemaining, self);
             self.updateClinAmount = updateClinAmount;
             self.updateClinPercent = updateClinPercent;
-            self.clinValid = ko.computed(clinValid, self);
+            self.validClin = ko.computed(validClin, self);
             self.addClin = addClin;
             self.removeClin = removeClin;
             self.updateClin = updateClin;
-            self.cancelEditClin = cancelEditClin;
+            self.undoClinChanges = undoClinChanges;
             self.addSlinToClin = addSlinToClin;
             self.openEditModal = openEditModal;
             self.updateSlinAmount = updateSlinAmount;
             self.updateSlinPercent = updateSlinPercent;
             self.availableCategories = ko.observableArray([]);
             self.validSlin = validSlin;
-            self.addSlinVisible = addSlinVisible;
+            self.validUpdateClin = validUpdateClin;
+            self.visibleAddSlin = visibleAddSlin;
+            self.removeSlinToClin = removeSlinToClin;
             var editIndex = -1;
+            var previousAmount = 0;
+            var previousClinId: string;
             
             function calculateRemaining(): number {
                 var self: ClinViewModel = this;
@@ -71,6 +77,7 @@
                     clin = vm.clin();
                 }
 
+                watchChanges(clin);
                 var amount = self.totalAwardedAmountAndReimbursed() * (clin.clinPercentage() / 100);
                 clin.clinAmount(amount);
             }
@@ -81,15 +88,19 @@
                     clin = vm.clin();
                 }
 
+                watchChanges(clin);
                 var percent = (clin.clinAmount() * 100) / self.totalAwardedAmountAndReimbursed();
                 clin.clinPercentage(percent);
             }
 
-            function clinValid(): boolean {
-                return !!self.clin().clinId && self.clin().clinId().length > 0 &&
-                    !!self.clin().clinAmount &&
-                    parseFloat(self.clin().clinAmount().toString()) > 0 &&
-                    (self.clinRemaining() - parseFloat(self.clin().clinAmount().toString())) >= 0;
+            function watchChanges(clin: Clin): void {
+                (<any>clin.clinAmount).subscribeChanged(function (latestValue, previousValue) {
+                    previousAmount = previousValue;
+                });
+            }
+
+            function validClin(): boolean {
+                return validUpdateClin(self.clin());
             }
 
             function addClin(): void {
@@ -119,9 +130,9 @@
                 clin.editMode(currMode);
             }
 
-            function cancelEditClin(clin: Clin): void {
+            function undoClinChanges(clin: Clin): void {
                 clin.clinId(self.editedClin().clinId());
-                clin.clinAmount(self.editedClin().clinAmount());
+                clin.clinAmount(previousAmount);
 
                 var percent = (self.editedClin().clinAmount() * 100) / self.totalAwardedAmountAndReimbursed();
                 clin.clinPercentage(percent);
@@ -134,11 +145,9 @@
                 updateClinItem(ko.mapping.toJS(self.editedClin));
             }
 
-            function removeSlinToClin(slin): void {
-                console.log(slin, self.editedClin().slins);
-
-                self.editedClin().slins.remove(slin);
-                updateClinItem(ko.mapping.toJS(self.editedClin));
+            function removeSlinToClin(clin, slin): void {
+                clin.slins.remove(slin);
+                updateClinItem(ko.mapping.toJS(clin));
             }
 
             function updateClinItem(clinItem: IClin): void {
@@ -153,7 +162,7 @@
                     self.clins(arr);
                     self.slin(new Slin(arr[editIndex]));
                     self.$slinModal.modal("hide");
-                    toastr.info("Done updating, new SLIN added", "AddSlin");
+                    toastr.info("Done updating, new SLIN added", "updateClinItem");
                 }
             }
 
@@ -163,12 +172,12 @@
                 request.done(populateModal);                
                 request.fail(errorHandler);
 
-                function populateModal(categories: Category[]): void {
-                    toastr.info("Done refreshing categories", "openEditModal");
+                function populateModal(categories: Category[]): void {                    
+                    self.availableCategories([]);
                     $.each(categories, (idx: number, elm: Category): void => {
                         self.availableCategories.push(ko.mapping.fromJS(elm));
                     });
-                
+                    toastr.info("Done refreshing categories", "openEditModal");
                     editIndex = self.clins.indexOf(clin);
                     self.editedClin(clin);
                     self.$slinModal.modal("show");
@@ -187,6 +196,13 @@
                 slin.slinPercent(percent);
             }
 
+            function validUpdateClin(clin: Clin): boolean {
+                return !!clin.clinId && clin.clinId().length > 0 &&
+                    !!clin.clinAmount &&
+                    parseFloat(clin.clinAmount().toString()) > 0 &&
+                    (self.clinRemaining() - parseFloat(clin.clinAmount().toString())) >= 0
+            }
+
             function validSlin(): boolean {
                 var clin = self.editedClin();
 
@@ -203,7 +219,7 @@
                     amount >= 0;
             }
 
-            function addSlinVisible(clin: Clin): boolean {
+            function visibleAddSlin(clin: Clin): boolean {
                 var amount = clin.clinAmount();
                 $.each(clin.slins(), (idx: number, elm: Slin): void => {
                     amount -= parseFloat(elm.slinAmount().toString());
