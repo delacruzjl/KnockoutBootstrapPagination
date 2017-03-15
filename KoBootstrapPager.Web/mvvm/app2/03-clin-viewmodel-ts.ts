@@ -54,7 +54,6 @@
             self.removeSlinToClin = removeSlinToClin;
             var editIndex = -1;
             var previousAmount = 0;
-            var previousClinId: string;
             
             function calculateRemaining(): number {
                 var self: ClinViewModel = this;
