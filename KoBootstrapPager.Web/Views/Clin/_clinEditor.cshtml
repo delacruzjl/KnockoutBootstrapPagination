@@ -1,0 +1,38 @@
+﻿<div class="row">
+    <div class="col-md-5">
+        ID
+    </div>
+    <div class="col-md-1">
+        Percentage
+    </div>
+    <div class="col-md-3">
+        Amount
+    </div>
+    <div class="col-md-3">
+        Remaining
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-5">
+        <input type="text" class="form-control" data-bind="value: clin().clinId" />
+    </div>
+    <div class="col-md-1">
+        <input type="text" class="form-control" data-bind="value: clin().clinPercentage, valueUpdate: 'keyup', event:{ keyup: updateClinAmount }" />
+    </div>
+    <div class="col-md-3">
+
+        <div class="input-group">
+            <input type="text" class="form-control"
+                   data-bind="value: clin().clinAmount, valueUpdate: 'keyup', event: { keyup: updateClinPercent }" />
+            <span class="input-group-addon">
+                <button data-bind="enable: validClin, click: addClin"> Add</button>
+            </span>
+        </div>
+
+
+    </div>
+    <div class="col-md-3">
+        <span class="text-info" data-bind="text: clinRemaining"></span>
+    </div>
+</div>

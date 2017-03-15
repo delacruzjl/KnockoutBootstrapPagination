@@ -40,114 +40,23 @@
                         <div class="panel-heading" role="tab" id="collapse-heading-one">
                             <h4 class="panel-title">
                                 <a role="button" data-toggle="collapse" data-parent="#collapse" href="#collapse-one" aria-expanded="true" aria-controls="collapse-one">
-                                    Accordion heading 1
+                                    Demo CLIN
                                 </a>
                             </h4>
                         </div>
                         <div id="collapse-one" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="collapse-heading-one">
-                            <div class="panel-body">
-                                <div class="row">
-                                    <div class="col-md-5">
-                                        ID
-                                    </div>
-                                    <div class="col-md-1">
-                                        Percentage
-                                    </div>
-                                    <div class="col-md-3">
-                                        Amount
-                                    </div>
-                                    <div class="col-md-3">
-                                        Remaining
-                                    </div>
-                                </div>
+                            <div class="panel-body">                                
 
-                                <div class="row">
-                                    <div class="col-md-5">
-                                        <input type="text" class="form-control" data-bind="value: clin().clinId" />
-                                    </div>
-                                    <div class="col-md-1">
-                                        <input type="text" class="form-control" data-bind="value: clin().clinPercentage, valueUpdate: 'keyup', event:{ keyup: updateClinAmount }" />
-                                    </div>
-                                    <div class="col-md-3">
-
-                                        <div class="input-group">
-                                            <input type="text" class="form-control"
-                                                   data-bind="value: clin().clinAmount, valueUpdate: 'keyup', event: { keyup: updateClinPercent }" />
-                                            <span class="input-group-addon">
-                                                <button data-bind="enable: validClin, click: addClin"> Add</button>
-                                            </span>
-                                        </div>
-
-
-                                    </div>
-                                    <div class="col-md-3">
-                                        <span class="text-info" data-bind="text: clinRemaining"></span>
-                                    </div>
-                                </div>
+                               @Html.Partial("_clinEditor")
 
                                 <div class="row" style="margin-top: 15px;">
                                     <div class="col-md-12" data-bind="template:{ name:'clin-listTemplate', foreach: clins }">
-
                                     </div>
                                 </div>
 
                             </div>
                             <div class="panel-footer">
-                                <div class="modal fade" id="slinModal"
-                                     tabindex="-1" role="dialog" aria-labelledby="slinModal-label">
-                                    <div class="modal-dialog modal-lg" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                <h4 class="modal-title" id="slinModal-label">
-                                                    SubLine Items, 
-                                                    total: <span data-bind="text: editedClin().clinAmount"></span>
-                                                    
-                                                </h4>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="row">
-                                                    <div class="col-md-5 col-md-offset-1">
-                                                        Category
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        Percentage
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        Amount
-                                                    </div>
-
-                                                </div>
-
-                                                <div class="row">
-                                                    <div class="col-md-5  col-md-offset-1">
-                                                        <select class="form-control"
-                                                                data-bind="options: availableCategories,
-                                                                       optionsText: 'categoryName',
-                                                                       value: slin().category,
-                                                                       optionsCaption: '-- Select --'"></select>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <input type="text" class="form-control"
-                                                               data-bind="value: slin().slinPercent, valueUpdate: 'keyup', event: { keyup: updateSlinAmount }" />
-                                                    </div>
-                                                    <div class="col-md-3">
-
-                                                        <input type="text" class="form-control"
-                                                               data-bind="value: slin().slinAmount, valueUpdate: 'keyup', event: { keyup: updateSlinPercent }" />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-primary" 
-                                                        data-bind="click: addSlinToClin, enable: $root.validSlin()">
-                                                    Add 
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                @Html.Partial("_slinEditorModal")
                             </div>
                         </div>
                     </div>
@@ -157,91 +66,7 @@
         </div>
     </div>
 
-
-    <script type="text/html" id="clin-listTemplate">
-        <div class="row" data-bind="visible: !editMode()">
-            <div class="col-md-1">
-                <!-- class="btn btn-primary btn-lg" -->
-                <button type="button"
-                        data-bind="click: $root.openEditModal, visible: $root.visibleAddSlin($data)">
-                    <i class="fa fa-plus"></i>
-                </button>
-
-            </div>
-            <div class="col-md-4">
-                <span data-bind="text: clinId"></span>
-            </div>
-            <div class="col-md-3 col-md-offset-1">
-                <span data-bind="text: clinAmount"></span>
-            </div>
-            <div class="col-md-1">
-                <span style="cursor: pointer;" data-bind="click: $root.updateClin">
-                    <i class="fa fa-edit"></i>
-                </span>
-            </div>
-            <div class="col-md-1">
-                <span class="text-danger" style="cursor: pointer;" data-bind="click: $root.removeClin">
-                    <i class="fa fa-remove"></i>
-                </span>
-            </div>
-        </div>
-        <div class="row" data-bind="visible: !editMode()">
-            <ul class="list-unstyled" data-bind="template: {name: 'slin-listTemplate', foreach: slins}"></ul>
-        </div>
-
-        <div class="row" data-bind="visible: !!editMode()" style="margin-top: 15px;">
-
-            <div class="col-md-4 col-md-offset-1">
-                <input type="text" class="form-control" data-bind="value: clinId" />
-            </div>
-            <div class="col-md-1">
-
-                <input type="text" class="form-control"
-                       data-bind="
-                       value: clinPercentage,
-                       valueUpdate: 'keyup',
-                       event:{ keyup: $root.updateClinAmount }" />
-            </div>
-            <div class="col-md-3">
-                <div class="input-group">
-                    <input type="text" class="form-control"
-                           data-bind="value: clinAmount, valueUpdate: 'keyup', event: { keyup: $root.updateClinPercent }" />
-                    <span class="input-group-addon">
-                        <button data-bind="click: $root.updateClin, enable: $root.validUpdateClin($data)">
-                            <i class="fa fa-floppy-o"></i>
-                        </button>
-                        <button data-bind="click: $root.undoClinChanges">
-                            <i class="fa fa-ban"></i>
-                        </button>
-                    </span>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <span style="cursor: pointer;" data-bind="click: $root.removeClin">
-                    <i class="fa fa-remove"></i>
-                </span>
-            </div>
-        </div>
-    </script>
-
-    <script type="text/html" id="slin-listTemplate">
-        <li>
-            <div class="col-md-5 col-md-offset-1">
-                <span data-bind="text: category.categoryName"></span>
-            </div>
-            <div class="col-md-3">
-                <span data-bind="text: slinAmount"></span>
-            </div>
-            <div class="col-md-1">
-                <span class="text-danger" style="cursor: pointer;" 
-                      data-bind="click: function(){ $root.removeSlinToClin($parent, $data) }">
-
-                    <i class="fa fa-remove"></i>
-                </span>
-            </div>
-        </li>
-    </script>
-
+    @Html.Partial("_koTemplates");
     @Scripts.Render(
         "~/bundles/bootstrap",
         "~/bundles/app2"

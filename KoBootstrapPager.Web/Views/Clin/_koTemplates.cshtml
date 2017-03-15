@@ -1,0 +1,85 @@
+﻿
+
+<script type="text/html" id="clin-listTemplate">
+    <div class="row" data-bind="visible: !editMode()">
+        <div class="col-md-1">
+            <!-- class="btn btn-primary btn-lg" -->
+            <button type="button"
+                    data-bind="click: $root.openEditModal, visible: $root.visibleAddSlin($data)">
+                <i class="fa fa-plus"></i>
+            </button>
+
+        </div>
+        <div class="col-md-4">
+            <span data-bind="text: clinId"></span>
+        </div>
+        <div class="col-md-3 col-md-offset-1">
+            <span data-bind="text: clinAmount"></span>
+        </div>
+        <div class="col-md-1">
+            <span style="cursor: pointer;" data-bind="click: $root.updateClin">
+                <i class="fa fa-edit"></i>
+            </span>
+        </div>
+        <div class="col-md-1">
+            <span class="text-danger" style="cursor: pointer;" data-bind="click: $root.removeClin">
+                <i class="fa fa-remove"></i>
+            </span>
+        </div>
+    </div>
+    <div class="row" data-bind="visible: !editMode()">
+        <ul class="list-unstyled" data-bind="template: {name: 'slin-listTemplate', foreach: slins}"></ul>
+    </div>
+
+    <div class="row" data-bind="visible: !!editMode()" style="margin-top: 15px;">
+
+        <div class="col-md-4 col-md-offset-1">
+            <input type="text" class="form-control" data-bind="value: clinId" />
+        </div>
+        <div class="col-md-1">
+
+            <input type="text" class="form-control"
+                   data-bind="
+                       value: clinPercentage,
+                       valueUpdate: 'keyup',
+                       event:{ keyup: $root.updateClinAmount }" />
+        </div>
+        <div class="col-md-3">
+            <div class="input-group">
+                <input type="text" class="form-control"
+                       data-bind="value: clinAmount, valueUpdate: 'keyup', event: { keyup: $root.updateClinPercent }" />
+                <span class="input-group-addon">
+                    <button data-bind="click: $root.updateClin, enable: $root.validUpdateClin($data)">
+                        <i class="fa fa-floppy-o"></i>
+                    </button>
+                    <button data-bind="click: $root.undoClinChanges">
+                        <i class="fa fa-ban"></i>
+                    </button>
+                </span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <span style="cursor: pointer;" data-bind="click: $root.removeClin">
+                <i class="fa fa-remove"></i>
+            </span>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="slin-listTemplate">
+    <li>
+        <div class="col-md-5 col-md-offset-1">
+            <span data-bind="text: category.categoryName"></span>
+        </div>
+        <div class="col-md-3">
+            <span data-bind="text: slinAmount"></span>
+        </div>
+        <div class="col-md-1">
+            <span class="text-danger" style="cursor: pointer;"
+                  data-bind="click: function(){ $root.removeSlinToClin($parent, $data) }">
+
+                <i class="fa fa-remove"></i>
+            </span>
+        </div>
+    </li>
+</script>
