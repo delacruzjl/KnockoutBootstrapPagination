@@ -10,23 +10,25 @@
         clins: KnockoutObservableArray<any>;
         slin: KnockoutObservable<Slin>;
         editedClin: KnockoutObservable<Clin>;
+        availableCategories: KnockoutObservableArray<Category>;
         updateClinAmount: (clin: Clin) => void;
         updateClinPercent: (clin: Clin) => void;
         addClin: () => void;
         removeClin: (clin: Clin) => void;
         updateClin: (clin: Clin) => void;
+        toggleClinEditMode: (clin: Clin) => void;
         undoClinChanges: (clin: Clin) => void;
-        addSlinToClin: (clin: Clin) => void;
-        openEditModal: (clin: Clin) => void;
+        addSlinToClin: () => void;
+        openSlinEditorModal: (clin: Clin) => void;
         updateSlinAmount: () => void;
         updateSlinPercent: () => void;
-        availableCategories: KnockoutObservableArray<Category>;
-        validSlin: (slin: Slin) => boolean;
-        visibleAddSlin: (clin: Clin) => boolean;
         removeSlinToClin: (clin: Clin, slin: Slin) => void;
+
+        validSlin: (slin: Slin) => boolean;
+        visibleAddSlin: (clin: Clin) => boolean;        
         validUpdateClin: (clin: Clin) => boolean;
         
-        constructor(private svc: ClinService, fakeTotalAmount: number) {
+        constructor(private svc: IClinService, fakeTotalAmount: number) {
             var self = this;
 
             self.$slinModal = $("#slinModal");
@@ -41,10 +43,11 @@
             self.validClin = ko.computed(validClin, self);
             self.addClin = addClin;
             self.removeClin = removeClin;
-            self.updateClin = updateClin;
+self.updateClin = updateClin;
+            self.toggleClinEditMode = toggleClinEditMode;
             self.undoClinChanges = undoClinChanges;
             self.addSlinToClin = addSlinToClin;
-            self.openEditModal = openEditModal;
+            self.openSlinEditorModal = openSlinEditorModal;
             self.updateSlinAmount = updateSlinAmount;
             self.updateSlinPercent = updateSlinPercent;
             self.availableCategories = ko.observableArray([]);
@@ -106,25 +109,45 @@
             function addClin(): void {
                 var clinItem = ko.mapping.toJS(self.clin);
                 saveClinItem(clinItem);
-            }
 
-            function saveClinItem(clinItem: IClin) {
-                var request = self.svc.addSingleEntry(clinItem);
+                function saveClinItem(clinItem: IClin) {
+                    var request = self.svc.addSingleEntry(clinItem);
+                    request.done(refreshList);
+                    request.fail(errorHandler);
+
+                    function refreshList(clin: IClin): void {
+                        self.clins.push(ko.mapping.fromJS(clin));
+                        self.clin(new Clin());
+                        toastr.success("Done inserting", "AddClin");
+                    }
+                }
+            }            
+
+            function removeClin(clin: Clin): void {
+                var request = self.svc.removeSingleEntry(ko.mapping.toJS(clin));
                 request.done(refreshList);
                 request.fail(errorHandler);
 
-                function refreshList(clin: IClin): void {
-                    self.clins.push(ko.mapping.fromJS(clin));
+                function refreshList(): void {
+                    self.clins.remove(clin);
                     self.clin(new Clin());
-                    toastr.info("Done inserting", "AddClin");
+                    toastr.success("Done removing", "removeClin");
                 }
             }
 
-            function removeClin(clin: Clin): void {
-                self.clins.remove(clin);
+            function updateClin(clin: Clin): void {
+                var request = self.svc.updateSingleEntry(ko.mapping.toJS(clin));
+                request.done(refreshList);
+                request.fail(errorHandler);
+
+                function refreshList(): void {
+                    toggleClinEditMode(clin);
+                    self.clin(new Clin());
+                    toastr.success("Done updating", "removeClin");
+                }
             }
 
-            function updateClin(clin: Clin): void {
+            function toggleClinEditMode(clin: Clin): void {
                 self.editedClin(clin);
                 var currMode = !clin.editMode();
                 clin.editMode(currMode);
@@ -166,7 +189,7 @@
                 }
             }
 
-            function openEditModal(clin: Clin): void {
+            function openSlinEditorModal(clin: Clin): void {
                 var request = svc.getAvailableCategories();
 
                 request.done(populateModal);                
@@ -177,7 +200,7 @@
                     $.each(categories, (idx: number, elm: Category): void => {
                         self.availableCategories.push(ko.mapping.fromJS(elm));
                     });
-                    toastr.info("Done refreshing categories", "openEditModal");
+                    toastr.info("Done refreshing categories", "openSlinEditorModal");
                     editIndex = self.clins.indexOf(clin);
                     self.editedClin(clin);
                     self.$slinModal.modal("show");

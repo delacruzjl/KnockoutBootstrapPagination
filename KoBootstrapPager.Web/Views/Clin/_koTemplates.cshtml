@@ -5,7 +5,7 @@
         <div class="col-md-1">
             <!-- class="btn btn-primary btn-lg" -->
             <button type="button"
-                    data-bind="click: $root.openEditModal, visible: $root.visibleAddSlin($data)">
+                    data-bind="click: $root.openSlinEditorModal, visible: $root.visibleAddSlin($data)">
                 <i class="fa fa-plus"></i>
             </button>
 
@@ -17,7 +17,7 @@
             <span data-bind="text: clinAmount"></span>
         </div>
         <div class="col-md-1">
-            <span style="cursor: pointer;" data-bind="click: $root.updateClin">
+            <span style="cursor: pointer;" data-bind="click: $root.toggleClinEditMode">
                 <i class="fa fa-edit"></i>
             </span>
         </div>

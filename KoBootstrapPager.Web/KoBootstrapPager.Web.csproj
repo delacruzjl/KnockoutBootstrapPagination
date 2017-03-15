@@ -186,6 +186,7 @@
     <Content Include="tests\paginationSpec.html" />
     <Content Include="tests\paginationSpec.js" />
     <Content Include="Web.config" />
+    <TypeScriptCompile Include="mvvm\app2\00-ko-extensions-ts.ts" />
     <TypeScriptCompile Include="mvvm\app2\02-1-Category-ts.ts" />
     <TypeScriptCompile Include="mvvm\app2\02-2-Slin-ts.ts" />
     <TypeScriptCompile Include="mvvm\app2\02-3-Clin-ts.ts" />
@@ -197,7 +198,9 @@
     <TypeScriptCompile Include="Scripts\typings\knockout.mapping\knockout.mapping.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\knockout\knockout.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\knockout\tests\jasmine.extensions.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\qunit\qunit.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\toastr\toastr.d.ts" />
+    <TypeScriptCompile Include="tests\clinViewModelTests-ts.ts" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
