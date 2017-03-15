@@ -68,7 +68,8 @@
                     }
                 });
 
-                return self.totalAwardedAmountAndReimbursed() - amounts;
+                var remaining = self.totalAwardedAmountAndReimbursed() - amounts;
+                return remaining >= 0 ? remaining : 0;
             }
 
             function updateClinAmount(vm: any): void {
