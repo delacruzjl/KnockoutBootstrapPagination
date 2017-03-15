@@ -1,89 +1,5 @@
 ﻿module App {
-    interface ISlin {
-        categoryId: number;
-        categoryName: string;
-        slinAmount: number;
-        slinPercent: number;
-    }
-
-    interface IClin {
-        clinId: string;
-        clinAmount: number;
-        clinPercent: number;
-        slins: ISlin[];
-    }
-
-    export class ClinService {
-        constructor() {
-
-        }
-
-        addSingleEntry(clin: IClin): JQueryPromise<IClin> {
-            let dfd = $.Deferred<IClin>();
-            dfd.resolve(clin);
-            return dfd.promise();
-        }
-
-        updateSingleEntry(clin: IClin): JQueryPromise<IClin> {
-            let dfd = $.Deferred<IClin>();
-            dfd.resolve(clin);
-            return dfd.promise();
-        }
-
-        removeSingleEntry(clin: IClin): JQueryPromise<void> {
-            let dfd = $.Deferred<void>();
-            dfd.resolve();
-            return dfd.promise();
-        }
-
-        addBulkEntries(clins: IClin[]): JQueryPromise<IClin[]> {
-            let dfd = $.Deferred<IClin[]>();
-            dfd.resolve(clins);
-            return dfd.promise();
-        }
-
-        updateBulkEntries(clins: IClin[]): JQueryPromise<IClin[]> {
-            let dfd = $.Deferred<IClin[]>();
-            dfd.resolve(clins);
-            return dfd.promise();
-        }
-
-        removeBulkEntries(clins: IClin[]): JQueryPromise<void> {
-            let dfd = $.Deferred<void>();
-            dfd.resolve();
-            return dfd.promise();
-        }
-    }
-
-    class Slin {
-        categoryId: KnockoutObservable<number>;
-        categoryName: KnockoutObservable<string>;
-        slinAmount: KnockoutObservable<number>;
-        slinPercent: KnockoutObservable<number>;
-
-        constructor(id?: number, catName?: string, amount?: number, percentage?: number) {
-            this.categoryId = ko.observable(id || 0);
-            this.categoryName = ko.observable(catName || "");
-            this.slinPercent = ko.observable(percentage || 0);
-            this.slinAmount = ko.observable(amount || 0);
-        }
-    }
-
-    class Clin {
-        clinId: KnockoutObservable<string>;
-        clinPercentage: KnockoutObservable<number>;
-        clinAmount: KnockoutObservable<number>;
-        editMode: KnockoutObservable<boolean>;
-        slins: KnockoutObservableArray<Slin>;
-
-        constructor(private id?: string, private amount?: number, private percentage?: number, slins?: Slin[]) {
-            this.clinId = ko.observable(id || "");
-            this.clinAmount = ko.observable(amount || 0);
-            this.clinPercentage = ko.observable(percentage || 0);
-            this.slins = ko.observableArray(slins || []);
-            this.editMode = ko.observable(false);
-        }
-    }
+    "use strict";
 
     export class ClinViewModel {
         totalAwardedAmountAndReimbursed: KnockoutObservable<number>;
@@ -93,7 +9,7 @@
         clinValid: KnockoutComputed<boolean>;
         clins: KnockoutObservableArray<any>;
         slin: KnockoutObservable<Slin>;
-        editedClin: IClin;
+        editedClin: KnockoutObservable<Clin>;
         updateClinAmount: (clin: Clin) => void;
         updateClinPercent: (clin: Clin) => void;
         addClin: () => void;
@@ -102,7 +18,12 @@
         cancelEditClin: (clin: Clin) => void;
         addSlinToClin: (clin: Clin) => void;
         openEditModal: (clin: Clin) => void;
-
+        updateSlinAmount: () => void;
+        updateSlinPercent: () => void;
+        availableCategories: KnockoutObservableArray<Category>;
+        validSlin: (slin: Slin) => boolean;
+        addSlinVisible: (clin: Clin) => boolean;
+        
         constructor(private svc: ClinService, fakeTotalAmount: number) {
             var self = this;
 
@@ -111,6 +32,7 @@
             self.clin = ko.observable(new Clin());
             self.clins = ko.observableArray([]);
             self.slin = ko.observable(new Slin());
+            self.editedClin = ko.observable(new Clin());
             self.clinRemaining = ko.computed(calculateRemaining, self);
             self.updateClinAmount = updateClinAmount;
             self.updateClinPercent = updateClinPercent;
@@ -121,7 +43,13 @@
             self.cancelEditClin = cancelEditClin;
             self.addSlinToClin = addSlinToClin;
             self.openEditModal = openEditModal;
-
+            self.updateSlinAmount = updateSlinAmount;
+            self.updateSlinPercent = updateSlinPercent;
+            self.availableCategories = ko.observableArray([]);
+            self.validSlin = validSlin;
+            self.addSlinVisible = addSlinVisible;
+            var editIndex = -1;
+            
             function calculateRemaining(): number {
                 var self: ClinViewModel = this;
                 if (self.clins().length === 0) {
@@ -143,7 +71,7 @@
                     clin = vm.clin();
                 }
 
-                var amount = self.clinRemaining() * (clin.clinPercentage() / 100);
+                var amount = self.totalAwardedAmountAndReimbursed() * (clin.clinPercentage() / 100);
                 clin.clinAmount(amount);
             }
 
@@ -153,13 +81,15 @@
                     clin = vm.clin();
                 }
 
-                var percent = (clin.clinAmount() * 100) / self.clinRemaining();
+                var percent = (clin.clinAmount() * 100) / self.totalAwardedAmountAndReimbursed();
                 clin.clinPercentage(percent);
             }
 
             function clinValid(): boolean {
                 return !!self.clin().clinId && self.clin().clinId().length > 0 &&
-                    !!self.clin().clinAmount && self.clin().clinAmount() > 0;
+                    !!self.clin().clinAmount &&
+                    parseFloat(self.clin().clinAmount().toString()) > 0 &&
+                    (self.clinRemaining() - parseFloat(self.clin().clinAmount().toString())) >= 0;
             }
 
             function addClin(): void {
@@ -169,15 +99,14 @@
 
             function saveClinItem(clinItem: IClin) {
                 var request = self.svc.addSingleEntry(clinItem);
-                request.done((clin: IClin): void => {
+                request.done(refreshList);
+                request.fail(errorHandler);
+
+                function refreshList(clin: IClin): void {
                     self.clins.push(ko.mapping.fromJS(clin));
                     self.clin(new Clin());
                     toastr.info("Done inserting", "AddClin");
-                });
-
-                request.fail((): void => {
-                    toastr.error("Could not insert CLIN item");
-                });
+                }
             }
 
             function removeClin(clin: Clin): void {
@@ -185,54 +114,107 @@
             }
 
             function updateClin(clin: Clin): void {
-                self.editedClin = ko.mapping.toJS(clin);
+                self.editedClin(clin);
                 var currMode = !clin.editMode();
                 clin.editMode(currMode);
             }
 
             function cancelEditClin(clin: Clin): void {
-                //console.log(clin, self.editedClin());
-                clin.clinId(self.editedClin.clinId);
-                clin.clinAmount(self.editedClin.clinAmount);
+                clin.clinId(self.editedClin().clinId());
+                clin.clinAmount(self.editedClin().clinAmount());
 
-                var percent = (self.editedClin.clinAmount * 100) / self.totalAwardedAmountAndReimbursed();
+                var percent = (self.editedClin().clinAmount() * 100) / self.totalAwardedAmountAndReimbursed();
                 clin.clinPercentage(percent);
                 clin.editMode(false);
             }
 
+            
             function addSlinToClin(): void {
-                console.log("entered", self.editedClin);
-                var slinItem = ko.mapping.toJS(self.slin());
-                self.editedClin.slins.push(slinItem);
-                
-                updateClinItem(self.editedClin);
+                self.editedClin().slins.push(self.slin());
+                updateClinItem(ko.mapping.toJS(self.editedClin));
+            }
+
+            function removeSlinToClin(slin): void {
+                console.log(slin, self.editedClin().slins);
+
+                self.editedClin().slins.remove(slin);
+                updateClinItem(ko.mapping.toJS(self.editedClin));
             }
 
             function updateClinItem(clinItem: IClin): void {
                 var request = svc.updateSingleEntry(clinItem);
-                request.done((clin: IClin): void => {
-                    self.slin(new Slin());
+                request.done(refreshList);
+                request.fail(errorHandler);
+
+                function refreshList(clin: IClin): void {
+                    var arr = self.clins();
+
+                    arr[editIndex] = ko.mapping.fromJS(clin);
+                    self.clins(arr);
+                    self.slin(new Slin(arr[editIndex]));
                     self.$slinModal.modal("hide");
                     toastr.info("Done updating, new SLIN added", "AddSlin");
-                });
-
-                request.fail((): void => {
-                    toastr.error("Could not insert CLIN item");
-                });
-
+                }
             }
 
             function openEditModal(clin: Clin): void {
-                self.editedClin = ko.mapping.toJS(clin);
-                self.$slinModal.modal("show");
+                var request = svc.getAvailableCategories();
+
+                request.done(populateModal);                
+                request.fail(errorHandler);
+
+                function populateModal(categories: Category[]): void {
+                    toastr.info("Done refreshing categories", "openEditModal");
+                    $.each(categories, (idx: number, elm: Category): void => {
+                        self.availableCategories.push(ko.mapping.fromJS(elm));
+                    });
+                
+                    editIndex = self.clins.indexOf(clin);
+                    self.editedClin(clin);
+                    self.$slinModal.modal("show");
+                }
+            }
+
+            function updateSlinAmount(): void {
+                var slin = self.slin();
+                var amount = self.editedClin().clinAmount() * (slin.slinPercent() / 100);
+                slin.slinAmount(amount);
+            }
+
+            function updateSlinPercent(): void {
+                var slin = self.slin();
+                var percent = (slin.slinAmount() * 100) / self.editedClin().clinAmount();
+                slin.slinPercent(percent);
+            }
+
+            function validSlin(): boolean {
+                var clin = self.editedClin();
+
+                var amount = clin.clinAmount() -
+                    self.slin().slinAmount();
+                $.each(clin.slins(), (idx: number, elm: Slin): void => {
+                    amount -= parseFloat(elm.slinAmount().toString());
+                });
+
+                return !!self.slin() &&
+                    !!self.slin().category() &&
+                    self.slin().category().id() > 0 &&
+                    self.slin().slinAmount() > 0 &&
+                    amount >= 0;
+            }
+
+            function addSlinVisible(clin: Clin): boolean {
+                var amount = clin.clinAmount();
+                $.each(clin.slins(), (idx: number, elm: Slin): void => {
+                    amount -= parseFloat(elm.slinAmount().toString());
+                });
+
+                return amount > 0;
+            }
+
+            function errorHandler(): void {
+                toastr.error("Could not insert CLIN item");
             }
         }
     }
 }
-
-((): void => {
-    var $element = $("#clinsDiv");
-    ko.cleanNode($element[0]);
-    var clinSvc = new App.ClinService();
-    ko.applyBindings(new App.ClinViewModel(clinSvc, 125000), $element[0]);
-})();

@@ -177,7 +177,12 @@
     <Content Include="tests\paginationSpec.html" />
     <Content Include="tests\paginationSpec.js" />
     <Content Include="Web.config" />
+    <TypeScriptCompile Include="mvvm\app2\02-1-Category-ts.ts" />
+    <TypeScriptCompile Include="mvvm\app2\02-2-Slin-ts.ts" />
+    <TypeScriptCompile Include="mvvm\app2\02-3-Clin-ts.ts" />
     <TypeScriptCompile Include="mvvm\app2\03-clin-viewmodel-ts.ts" />
+    <TypeScriptCompile Include="mvvm\app2\01-ClinService-ts.ts" />
+    <TypeScriptCompile Include="mvvm\app2\04-kobinding-ts.ts" />
     <TypeScriptCompile Include="Scripts\typings\bootstrap\index.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\knockout.mapping\knockout.mapping.d.ts" />

@@ -85,11 +85,9 @@
                                     </div>
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <table class="table table-responsive table-striped table-hover">
-                                            <tbody data-bind="template:{ name:'clin-listTemplate', foreach: clins }"></tbody>
-                                        </table>
+                                <div class="row" style="margin-top: 15px;">
+                                    <div class="col-md-12" data-bind="template:{ name:'clin-listTemplate', foreach: clins }">
+
                                     </div>
                                 </div>
 
@@ -102,7 +100,9 @@
                                             <div class="modal-header">
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                                 <h4 class="modal-title" id="slinModal-label">
-                                                    SubLine Items
+                                                    SubLine Items, 
+                                                    total: <span data-bind="text: editedClin().clinAmount"></span>
+                                                    
                                                 </h4>
                                             </div>
                                             <div class="modal-body">
@@ -121,25 +121,28 @@
 
                                                 <div class="row">
                                                     <div class="col-md-5  col-md-offset-1">
-                                                        <select class="form-control" data-bind="value: slin().categoryId">
-                                                            <option value="-1">-- Select --</option>
-                                                        </select>
+                                                        <select class="form-control"
+                                                                data-bind="options: availableCategories,
+                                                                       optionsText: 'categoryName',
+                                                                       value: slin().category,
+                                                                       optionsCaption: '-- Select --'"></select>
                                                     </div>
                                                     <div class="col-md-2">
                                                         <input type="text" class="form-control"
-                                                               data-bind="value: slin().slinPercentage, valueUpdate: 'keyup'" />
+                                                               data-bind="value: slin().slinPercent, valueUpdate: 'keyup', event: { keyup: updateSlinAmount }" />
                                                     </div>
                                                     <div class="col-md-3">
 
                                                         <input type="text" class="form-control"
-                                                               data-bind="value: slin().slinAmount, valueUpdate: 'keyup'" />
+                                                               data-bind="value: slin().slinAmount, valueUpdate: 'keyup', event: { keyup: updateSlinPercent }" />
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-primary" data-bind="click: addSlinToClin">
-                                                    Add
+                                                <button type="button" class="btn btn-primary" 
+                                                        data-bind="click: addSlinToClin, enable: $root.validSlin()">
+                                                    Add 
                                                 </button>
                                             </div>
                                         </div>
@@ -153,48 +156,53 @@
             </div>
         </div>
     </div>
+
+
     <script type="text/html" id="clin-listTemplate">
-        <tr data-bind="visible: !editMode()">
-            <td>
+        <div class="row" data-bind="visible: !editMode()">
+            <div class="col-md-1">
                 <!-- class="btn btn-primary btn-lg" -->
                 <button type="button"
-                        data-bind="click: $root.openEditModal">
+                        data-bind="click: $root.openEditModal, visible: $root.addSlinVisible($data)">
                     <i class="fa fa-plus"></i>
                 </button>
 
-            </td>
-            <td>
+            </div>
+            <div class="col-md-4">
                 <span data-bind="text: clinId"></span>
-            </td>
-            <td>
+            </div>
+            <div class="col-md-3 col-md-offset-1">
                 <span data-bind="text: clinAmount"></span>
-            </td>
-            <td>
+            </div>
+            <div class="col-md-1">
                 <span style="cursor: pointer;" data-bind="click: $root.updateClin">
                     <i class="fa fa-edit"></i>
                 </span>
-            </td>
-            <td>
-                <span style="cursor: pointer;" data-bind="click: $root.removeClin">
+            </div>
+            <div class="col-md-1">
+                <span class="text-danger" style="cursor: pointer;" data-bind="click: $root.removeClin">
                     <i class="fa fa-remove"></i>
                 </span>
-            </td>
-        </tr>
+            </div>
+        </div>
+        <div class="row" data-bind="visible: !editMode()">
+            <ul class="list-unstyled" data-bind="template: {name: 'slin-listTemplate', foreach: slins}"></ul>
+        </div>
 
-        <tr data-bind="visible: !!editMode()">
-            <td></td>
-            <td class="col-md-4">
+        <div class="row" data-bind="visible: !!editMode()" style="margin-top: 15px;">
+
+            <div class="col-md-4 col-md-offset-1">
                 <input type="text" class="form-control" data-bind="value: clinId" />
-            </td>
-            <td class="col-md-1">
+            </div>
+            <div class="col-md-1">
 
                 <input type="text" class="form-control"
                        data-bind="
                        value: clinPercentage,
                        valueUpdate: 'keyup',
                        event:{ keyup: $root.updateClinAmount }" />
-            </td>
-            <td class="col-md-3">
+            </div>
+            <div class="col-md-3">
                 <div class="input-group">
                     <input type="text" class="form-control"
                            data-bind="value: clinAmount, valueUpdate: 'keyup', event: { keyup: $root.updateClinPercent }" />
@@ -207,24 +215,31 @@
                         </button>
                     </span>
                 </div>
-            </td>
-            <td class="col-md-3">
+            </div>
+            <div class="col-md-3">
                 <span style="cursor: pointer;" data-bind="click: $root.removeClin">
                     <i class="fa fa-remove"></i>
                 </span>
-            </td>
-        </tr>
+            </div>
+        </div>
     </script>
 
     <script type="text/html" id="slin-listTemplate">
-        <tr>
-            <td>
-                <span data-bind="text: categoryName"></span>
-            </td>
-            <td>
+        <li>
+            <div class="col-md-5 col-md-offset-1">
+                <span data-bind="text: category.categoryName"></span>
+            </div>
+            <div class="col-md-3">
                 <span data-bind="text: slinAmount"></span>
-            </td>
-        </tr>
+            </div>
+            <div class="col-md-1">
+                <span class="text-danger" style="cursor: pointer;" 
+                      data-bind="click: $parent.removeSlin.bind($parent.slins, $data)">
+
+                    <i class="fa fa-remove"></i>
+                </span>
+            </div>
+        </li>
     </script>
 
     @Scripts.Render(
