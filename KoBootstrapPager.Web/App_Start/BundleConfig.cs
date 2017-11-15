@@ -2,6 +2,17 @@
 
 namespace Pagination.Web {
     public class BundleConfig {
+
+        public void DoSomething(string fileName)
+{
+  using (var stream = System.IO.File.Open(fileName,  System.IO.FileMode.Open))
+  {
+    var result = new byte[stream.Length];
+    stream.Read(result, 0, (int)stream.Length); // Noncompliant
+    // ... do something with result
+  }
+}
+
         public static void Register(BundleCollection bundles) {
             bundles.UseCdn = true;
 
