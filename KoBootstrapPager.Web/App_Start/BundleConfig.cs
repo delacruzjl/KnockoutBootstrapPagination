@@ -2,7 +2,7 @@
 
 namespace Pagination.Web {
     public class BundleConfig {
-        public static void Register(BundleCollection bundles) {
+        protected static void Register(BundleCollection bundles) {
             bundles.UseCdn = true;
 
             bundles.Add(new StyleBundle("~/content/normalize")
