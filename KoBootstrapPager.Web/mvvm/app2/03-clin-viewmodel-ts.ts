@@ -107,7 +107,7 @@ self.updateClin = updateClin;
             }
 
             function addClin(): void {
-                var clinItem = ko.mapping.toJS(self.clin);
+                var clinItem = JSON.parse(ko.toJSON(self.clin()));
                 saveClinItem(clinItem);
 
                 function saveClinItem(clinItem: IClin) {
@@ -124,7 +124,8 @@ self.updateClin = updateClin;
             }            
 
             function removeClin(clin: Clin): void {
-                var request = self.svc.removeSingleEntry(ko.mapping.toJS(clin));
+                var clinItem = JSON.parse(ko.toJSON(clin));
+                var request = self.svc.removeSingleEntry(clinItem);
                 request.done(refreshList);
                 request.fail(errorHandler);
 
@@ -136,7 +137,8 @@ self.updateClin = updateClin;
             }
 
             function updateClin(clin: Clin): void {
-                var request = self.svc.updateSingleEntry(ko.mapping.toJS(clin));
+                var clinItem = JSON.parse(ko.toJSON(clin));
+                var request = self.svc.updateSingleEntry(clinItem);
                 request.done(refreshList);
                 request.fail(errorHandler);
 
@@ -165,7 +167,8 @@ self.updateClin = updateClin;
             
             function addSlinToClin(): void {
                 self.editedClin().slins.push(self.slin());
-                updateClinItem(ko.mapping.toJS(self.editedClin));
+                var clinItem = JSON.parse(ko.toJSON(self.editedClin));
+                updateClinItem(clinItem);
             }
 
             function removeSlinToClin(clin, slin): void {
@@ -198,7 +201,8 @@ self.updateClin = updateClin;
                 function populateModal(categories: Category[]): void {                    
                     self.availableCategories([]);
                     $.each(categories, (idx: number, elm: Category): void => {
-                        self.availableCategories.push(ko.mapping.fromJS(elm));
+                        var cat = JSON.parse(ko.toJSON(elm));
+                        self.availableCategories.push(cat);
                     });
                     toastr.info("Done refreshing categories", "openSlinEditorModal");
                     editIndex = self.clins.indexOf(clin);

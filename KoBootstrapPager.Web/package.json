@@ -1,0 +1,14 @@
+{
+  "name": "kobootstrappager",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "MS",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jquery": "^3.3.1",
+    "@types/knockout": "^3.4.53",
+    "@types/knockout.mapping": "^2.0.33",
+    "@types/qunit": "^1.16.31",
+    "@types/toastr": "^2.1.35"
+  }
+}
