@@ -1,7 +1,7 @@
 ﻿module App {
     "use strict";
 
-    export class Clin {
+    export class Clin  {
         clinId: KnockoutObservable<string>;
         clinPercentage: KnockoutObservable<number>;
         clinAmount: KnockoutObservable<number>;
