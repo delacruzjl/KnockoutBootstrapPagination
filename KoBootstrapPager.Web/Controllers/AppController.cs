@@ -1,9 +1,10 @@
 ﻿using System.Linq;
-using System.Web.Mvc;
 using System.Xml.Schema;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Pagination.Web.Controllers {
-    public class AppController : Controller {
+    public class AppController : Controller
+    {
         public ViewResult Index() {
             return View();
         }
@@ -27,7 +28,7 @@ namespace Pagination.Web.Controllers {
                     .Take(size)
             };
 
-            return Json(output, JsonRequestBehavior.AllowGet);
+            return Json(output);
         }
     }
 }
