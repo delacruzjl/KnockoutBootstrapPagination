@@ -3,6 +3,7 @@
 }
 <!doctype html>
 <html class="no-js" lang="">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -11,17 +12,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="apple-touch-icon" href="@Url.Content("~/apple-touch-icon.png")">
 
-    @Styles.Render(
-    "~/content/normalize",
-    "~/content/bootstrap",
-    "~/content/site")
+    <link rel="stylesheet" href="~/content/normalize.css">
+    <link rel="stylesheet" href="~/content/bootstrap.css">
+    <link rel="stylesheet" href="~/content/toastr.css">
+    <link rel="stylesheet" href="~/css/main.css">
 
     <!-- top scripts-->
-    @Scripts.Render(
-        "~/bundles/modernizr",
-        "~/bundles/jquery",
-        "~/bundles/knockout")
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
+    <script src="~/Scripts/jquery-3.1.1.min.js"></script>
+    <script src="~/Scripts/knockout-3.4.0.js"></script>
+    <script src="~/scripts/knockout.mapping-latest.js"></script>
+    <script src="~/scripts/toastr.js"></script>
+
+
+
 </head>
+
 <body>
     <!--[if lte IE 9]>
         <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
@@ -52,7 +58,8 @@
             <div class="row">
 
                 <nav aria-label="Page navigation">
-                    <ul class="pagination" data-bind="template: {name: 'page-template', foreach: pagination.visiblePages }"></ul>
+                    <ul class="pagination"
+                        data-bind="template: {name: 'page-template', foreach: pagination.visiblePages }"></ul>
                 </nav>
             </div>
 
@@ -70,10 +77,8 @@
         </section>
     </div>
 
-    @Scripts.Render(
-        "~/bundles/bootstrap",
-        "~/bundles/app1"
-    )
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/app1.js"></script>
 
 </body>
 
